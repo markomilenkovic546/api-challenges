@@ -461,7 +461,7 @@ describe('Update Challenges with POST', () => {
             expect(response.body.title).to.eqls(randomTask.title);
             expect(response.body.doneStatus).to.eqls(true);
             expect(response.body.description).to.eqls(randomTask.description);
-            cy.fixture('json-schemas/PUT todo (200).json').then((schema) => {
+            cy.fixture('json-schemas/POST todo (201).json').then((schema) => {
                 // Validate the response body against the schema
                 const isValid = tv4.validate(response.body, schema);
                 expect(isValid).to.be.true;
@@ -478,29 +478,108 @@ describe('Update Challenges with POST', () => {
     });
 
     /*Issue a POST request for a todo which does not exist. Expect to receive a 404 response.*/
-    it.only('POST /todos/{id} (404', () => {
-      // Generate test data
-      const randomTask = {
-        title: faker.lorem.word(),
-        doneStatus: true,
-        description: faker.string.sample(20)
-    };
-    cy.api({
-        method: 'POST',
-        url: '/todos/30',
-        headers: {
-            'X-Challenger': Cypress.env('X-Challenger')
-        },
-        body: {
-            title: randomTask.title,
-            doneStatus: randomTask.doneStatus,
-            description: randomTask.description
-        },
-        failOnStatusCode: false
-    }).then((response) => {
-        expect(response.status).to.eqls(404);
-        // Verify that challenge is complited
-        cy.verifyChallenge(17);
+    it('POST /todos/{id} (404', () => {
+        // Generate test data
+        const randomTask = {
+            title: faker.lorem.word(),
+            doneStatus: true,
+            description: faker.string.sample(20)
+        };
+        cy.api({
+            method: 'POST',
+            url: '/todos/30',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            body: {
+                title: randomTask.title,
+                doneStatus: randomTask.doneStatus,
+                description: randomTask.description
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(404);
+            // Verify that challenge is complited
+            cy.verifyChallenge(17);
+        });
     });
+});
+
+describe('Update Challenges with PUT', () => {
+    /*Issue a PUT request to update an existing todo with
+   a complete payload i.e. title, description and donestatus.*/
+    it('PUT /todos/{id} full (200)', () => {
+        // Generate test data
+        const randomTask = {
+            title: faker.lorem.word(),
+            doneStatus: true,
+            description: faker.string.sample(20)
+        };
+        cy.api({
+            method: 'PUT',
+            url: '/todos/2',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            body: {
+                title: randomTask.title,
+                doneStatus: randomTask.doneStatus,
+                description: randomTask.description
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(200);
+            // Verify response body
+            expect(response.body.title).to.eqls(randomTask.title);
+            expect(response.body.doneStatus).to.eqls(true);
+            expect(response.body.description).to.eqls(randomTask.description);
+            cy.fixture('json-schemas/PUT todo (200).json').then((schema) => {
+                // Validate the response body against the schema
+                const isValid = tv4.validate(response.body, schema);
+                expect(isValid).to.be.true;
+            });
+            cy.verifyThatTaskIsInsertedInDB(
+                response.body.id,
+                response.body.title,
+                response.body.doneStatus,
+                response.body.description
+            );
+            // Verify that challenge is complited
+            cy.verifyChallenge(18);
+        });
+    });
+
+    /* Issue a PUT request to update an existing todo with just mandatory items in payload i.e. title.*/
+    it.only('PUT /todos/{id} partial (200)', () => {
+        // Generate test data
+        const randomTask = {
+            title: faker.lorem.word(),
+            doneStatus: true,
+            description: faker.string.sample(20)
+        };
+        cy.api({
+            method: 'PUT',
+            url: '/todos/2',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            body: {
+                title: randomTask.title
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(200);
+            // Verify response body
+            expect(response.body.title).to.eqls(randomTask.title);
+            expect(response.body.doneStatus).to.eqls(false);
+            expect(response.body.description).to.eqls('');
+            cy.fixture('json-schemas/PUT todo (200).json').then((schema) => {
+                // Validate the response body against the schema
+                const isValid = tv4.validate(response.body, schema);
+                expect(isValid).to.be.true;
+            });
+            // Verify that challenge is complited
+            cy.verifyChallenge(19);
+        });
     });
 });
