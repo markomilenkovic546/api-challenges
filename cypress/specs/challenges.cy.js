@@ -550,7 +550,7 @@ describe('Update Challenges with PUT', () => {
     });
 
     /* Issue a PUT request to update an existing todo with just mandatory items in payload i.e. title.*/
-    it.only('PUT /todos/{id} partial (200)', () => {
+    it('PUT /todos/{id} partial (200)', () => {
         // Generate test data
         const randomTask = {
             title: faker.lorem.word(),
@@ -585,7 +585,7 @@ describe('Update Challenges with PUT', () => {
 
     /* Issue a PUT request to fail to update an existing
      todo because title is missing in payload.*/
-    it.only('PUT /todos/{id} no title (400)', () => {
+    it('PUT /todos/{id} no title (400)', () => {
         // Generate test data
         const randomTask = {
             title: faker.lorem.word(),
@@ -606,10 +606,41 @@ describe('Update Challenges with PUT', () => {
         }).then((response) => {
             expect(response.status).to.eqls(400);
             expect(response.body.errorMessages[0]).to.eqls(
-              'title : field is mandatory'
-          );
+                'title : field is mandatory'
+            );
             // Verify that challenge is complited
             cy.verifyChallenge(20);
+        });
+    });
+
+    /*Issue a PUT request to fail to update an existing todo because id different in payload.*/
+    it.only('PUT /todos/{id} no amend id (400)', () => {
+        // Generate test data
+        const randomTask = {
+            title: faker.lorem.word(),
+            doneStatus: true,
+            description: faker.string.sample(20)
+        };
+        cy.api({
+            method: 'PUT',
+            url: '/todos/7',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            body: {
+                id: 24,
+                title: randomTask.title,
+                doneStatus: randomTask.doneStatus,
+                description: randomTask.description
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(400);
+            expect(response.body.errorMessages[0]).to.eqls(
+                'Can not amend id from 7 to 24'
+            );
+            // Verify that challenge is complited
+            cy.verifyChallenge(21);
         });
     });
 });
