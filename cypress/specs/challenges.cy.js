@@ -133,6 +133,11 @@ describe('GET Challenges', () => {
             expect(response.body.todos[0].title).to.eqls(randomTask.title);
             expect(response.body.todos[0].doneStatus).to.eqls(true);
             expect(response.body.todos[0].description).to.eqls(randomTask.description);
+            cy.fixture('json-schemas/GET todos (200).json').then((schema) => {
+                // Validate the response body against the schema
+                const isValid = tv4.validate(response.body, schema);
+                expect(isValid).to.be.true;
+            });
             // Verify that challenge is complited
             cy.verifyChallenge(6);
         });
@@ -158,5 +163,41 @@ describe('HEAD Challenges', () => {
 
 describe('Creation Challenges with POST', () => {
     // Issue a POST request to successfully create a todo
-    it('POST /todos (201)', () => {});
+    it('POST /todos (201)', () => {
+        // Generate test data
+        const randomTask = {
+            title: faker.lorem.words(),
+            doneStatus: true,
+            description: faker.lorem.sentence()
+        };
+        cy.api({
+            method: 'POST',
+            url: '/todos',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            body: {
+                title: randomTask.title,
+                doneStatus: randomTask.doneStatus,
+                description: randomTask.description
+            }
+        }).then((response) => {
+            expect(response.status).to.eqls(201);
+            // Verify response body
+            expect(response.body.title).to.eqls(randomTask.title);
+            expect(response.body.doneStatus).to.eqls(true);
+            expect(response.body.description).to.eqls(randomTask.description);
+            cy.fixture('json-schemas/POST todo (201).json').then((schema) => {
+                // Validate the response body against the schema
+                const isValid = tv4.validate(response.body, schema);
+                expect(isValid).to.be.true;
+            });
+            cy.verifyThatTaskIsInsertedInDB(
+                response.body.id,
+                response.body.title,
+                response.body.doneStatus,
+                response.body.description
+            );
+        });
+    });
 });
