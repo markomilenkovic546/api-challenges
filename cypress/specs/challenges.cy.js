@@ -436,7 +436,7 @@ describe('Creation Challenges with PUT', () => {
 
 describe('Update Challenges with POST', () => {
     /* Issue a POST request to successfully update a todo*/
-    it.only('POST /todos/{id} (200)', () => {
+    it('POST /todos/{id} (200)', () => {
         // Generate test data
         const randomTask = {
             title: faker.lorem.word(),
@@ -475,5 +475,32 @@ describe('Update Challenges with POST', () => {
             // Verify that challenge is complited
             cy.verifyChallenge(16);
         });
+    });
+
+    /*Issue a POST request for a todo which does not exist. Expect to receive a 404 response.*/
+    it.only('POST /todos/{id} (404', () => {
+      // Generate test data
+      const randomTask = {
+        title: faker.lorem.word(),
+        doneStatus: true,
+        description: faker.string.sample(20)
+    };
+    cy.api({
+        method: 'POST',
+        url: '/todos/30',
+        headers: {
+            'X-Challenger': Cypress.env('X-Challenger')
+        },
+        body: {
+            title: randomTask.title,
+            doneStatus: randomTask.doneStatus,
+            description: randomTask.description
+        },
+        failOnStatusCode: false
+    }).then((response) => {
+        expect(response.status).to.eqls(404);
+        // Verify that challenge is complited
+        cy.verifyChallenge(17);
+    });
     });
 });
