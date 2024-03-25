@@ -892,13 +892,45 @@ describe('Restore session', () => {
   Issue a GET request on the `/challenger/{guid}` end point,
   with an existing challenger GUID. This will return the progress data payload that
  can be used to later restore your progress to this status.*/
-    it.only('GET /challenger/guid (existing X-CHALLENGER)', () => {
+    it('GET /challenger/guid (existing X-CHALLENGER)', () => {
         cy.api({
-            method: 'get',
+            method: 'GET',
             url: `/challenger/${Cypress.env('X-Challenger')}`,
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
             failOnStatusCode: false
         }).then((response) => {
             expect(response.status).to.eqls(200);
         });
+        cy.verifyChallenge(33);
+    });
+
+    /*Issue a PUT request on the `/challenger/{guid}` end point, with an existing
+     challenger GUID to restore that challenger's progress into memory.*/
+    it.only('PUT /challenger/guid RESTORE', () => {
+        cy.api({
+            method: 'GET',
+            url: `/challenger/${Cypress.env('X-Challenger')}`,
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            const payload = response.body;
+            expect(response.status).to.eqls(200);
+            cy.api({
+                method: 'PUT',
+                url: `/challenger/${Cypress.env('X-Challenger')}`,
+                headers: {
+                    'X-Challenger': Cypress.env('X-Challenger')
+                },
+                body: payload,
+                failOnStatusCode: false
+            }).then((response) => {
+                expect(response.status).to.eqls(200);
+            });
+        });
+        cy.verifyChallenge(34);
     });
 });
