@@ -854,33 +854,51 @@ describe('Content-Type Challenges', () => {
         });
         cy.verifyChallenge(31);
     });
-/*Issue a POST request on the `/todos` end point
+    /*Issue a POST request on the `/todos` end point
  with an unsupported content type to generate a 415 status code*/
     it('POST /todos JSON', () => {
-      // Generate test data
-      const randomTask = {
-          title: faker.lorem.word(),
-          doneStatus: true,
-          description: faker.string.sample(20)
-      };
-      cy.api({
-          method: 'POST',
-          url: '/todos',
-          headers: {
-              'X-Challenger': Cypress.env('X-Challenger'),
-              Accept: '*/*',
-              'Content-Type': 'hello'
-          },
-          body: {
-              title: randomTask.title,
-              doneStatus: randomTask.doneStatus,
-              description: randomTask.description
-          },
-          failOnStatusCode: false
-      }).then((response) => {
-          expect(response.status).to.eqls(415);
-          expect(response.body.errorMessages[0]).to.eqls('Unsupported Content Type - hello')
-      });
-      cy.verifyChallenge(31);
-  });
+        // Generate test data
+        const randomTask = {
+            title: faker.lorem.word(),
+            doneStatus: true,
+            description: faker.string.sample(20)
+        };
+        cy.api({
+            method: 'POST',
+            url: '/todos',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger'),
+                Accept: '*/*',
+                'Content-Type': 'hello'
+            },
+            body: {
+                title: randomTask.title,
+                doneStatus: randomTask.doneStatus,
+                description: randomTask.description
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(415);
+            expect(response.body.errorMessages[0]).to.eqls(
+                'Unsupported Content Type - hello'
+            );
+        });
+        cy.verifyChallenge(32);
+    });
+});
+
+describe('Restore session', () => {
+    /*	
+  Issue a GET request on the `/challenger/{guid}` end point,
+  with an existing challenger GUID. This will return the progress data payload that
+ can be used to later restore your progress to this status.*/
+    it.only('GET /challenger/guid (existing X-CHALLENGER)', () => {
+        cy.api({
+            method: 'get',
+            url: `/challenger/${Cypress.env('X-Challenger')}`,
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(200);
+        });
+    });
 });
