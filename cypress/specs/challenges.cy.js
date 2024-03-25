@@ -2,7 +2,7 @@ const { faker } = require('@faker-js/faker');
 const tv4 = require('tv4');
 
 describe('Challenger session creation', () => {
-    it('Should create a session and store a token as an env var', () => {
+    it.only('Should create a session and store a token as an env var', () => {
         cy.api({
             method: 'POST',
             url: '/challenger',
@@ -368,36 +368,112 @@ describe('Creation Challenges with POST', () => {
 
     /*Issue a POST request to create a todo but fail validation
      because your payload contains an unrecognised field. */
-     it('POST /todos (400) extra', () => {
-      // Generate test data
-      const randomTask = {
-          title: faker.lorem.word(),
-          doneStatus: true,
-          description: faker.string.sample(20)
-      };
+    it('POST /todos (400) extra', () => {
+        // Generate test data
+        const randomTask = {
+            title: faker.lorem.word(),
+            doneStatus: true,
+            description: faker.string.sample(20)
+        };
 
-      cy.log(randomTask.title);
-      cy.api({
-          method: 'POST',
-          url: '/todos',
-          headers: {
-              'X-Challenger': Cypress.env('X-Challenger')
-          },
-          body: {
-              title: randomTask.title,
-              doneStatus: randomTask.doneStatus,
-              description: randomTask.description,
-              extra: 'val'
-          },
-          failOnStatusCode: false
-      }).then((response) => {
-          expect(response.status).to.eqls(400);
-          // Verify response body
-          expect(response.body.errorMessages[0]).to.eqls(
-              "Could not find field: extra"
-          );
-          // Verify that challenge is complited
-          cy.verifyChallenge(14);
-      });
-  });
+        cy.log(randomTask.title);
+        cy.api({
+            method: 'POST',
+            url: '/todos',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            body: {
+                title: randomTask.title,
+                doneStatus: randomTask.doneStatus,
+                description: randomTask.description,
+                extra: 'val'
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(400);
+            // Verify response body
+            expect(response.body.errorMessages[0]).to.eqls(
+                'Could not find field: extra'
+            );
+            // Verify that challenge is complited
+            cy.verifyChallenge(14);
+        });
+    });
+});
+
+describe('Creation Challenges with PUT', () => {
+    it('PUT /todos/{id} (400)', () => {
+        // Generate test data
+        const randomTask = {
+            title: faker.lorem.word(),
+            doneStatus: true,
+            description: faker.string.sample(20)
+        };
+        cy.api({
+            method: 'PUT',
+            url: '/todos/25',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            body: {
+                title: randomTask.title,
+                doneStatus: randomTask.doneStatus,
+                description: randomTask.description
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(400);
+            // Verify response body
+            expect(response.body.errorMessages[0]).to.eqls(
+                'Cannot create todo with PUT due to Auto fields id'
+            );
+            // Verify that challenge is complited
+            cy.verifyChallenge(15);
+        });
+    });
+});
+
+describe('Update Challenges with POST', () => {
+    /* Issue a POST request to successfully update a todo*/
+    it.only('POST /todos/{id} (200)', () => {
+        // Generate test data
+        const randomTask = {
+            title: faker.lorem.word(),
+            doneStatus: true,
+            description: faker.string.sample(20)
+        };
+        cy.api({
+            method: 'POST',
+            url: '/todos/2',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            body: {
+                title: randomTask.title,
+                doneStatus: randomTask.doneStatus,
+                description: randomTask.description
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(200);
+            // Verify response body
+            expect(response.body.title).to.eqls(randomTask.title);
+            expect(response.body.doneStatus).to.eqls(true);
+            expect(response.body.description).to.eqls(randomTask.description);
+            cy.fixture('json-schemas/PUT todo (200).json').then((schema) => {
+                // Validate the response body against the schema
+                const isValid = tv4.validate(response.body, schema);
+                expect(isValid).to.be.true;
+            });
+            cy.verifyThatTaskIsInsertedInDB(
+                response.body.id,
+                response.body.title,
+                response.body.doneStatus,
+                response.body.description
+            );
+            // Verify that challenge is complited
+            cy.verifyChallenge(16);
+        });
+    });
 });
