@@ -796,3 +796,35 @@ Issue a GET request on the `/todos` end point with an `Accept` header
         cy.verifyChallenge(29);
     });
 });
+
+describe('Content-Type Challenges', () => {
+    /*Issue a POST request on the `/todos` end point to create a todo using Content-Type `application/xml`,
+   and Accepting only XML ie. Accept header of `application/xml`*/
+    it.only('POST /todos XML', () => {
+        // Generate test data
+        const randomTask = {
+            title: faker.lorem.word(),
+            doneStatus: true,
+            description: faker.string.sample(20)
+        };
+        cy.api({
+            method: 'POST',
+            url: '/todos',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger'),
+                Accept: 'application/xml',
+                'Content-Type': 'application/xml'
+            },
+            body:
+            `<todo>
+            <doneStatus>${randomTask.doneStatus}</doneStatus>
+            <title>${randomTask.description}</title>
+          </todo>`,
+            
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(201);
+        });
+        cy.verifyChallenge(30);
+    });
+});
