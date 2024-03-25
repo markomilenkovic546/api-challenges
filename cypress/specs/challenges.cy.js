@@ -307,9 +307,9 @@ describe('Creation Challenges with POST', () => {
     it('POST /todos (201) max out content', () => {
         // Generate test data
         const randomTask = {
-            title: faker.string.sample(51),
+            title: faker.string.sample(50),
             doneStatus: true,
-            description: faker.string.sample(201)
+            description: faker.string.sample(200)
         };
 
         cy.log(randomTask.title);
@@ -326,13 +326,78 @@ describe('Creation Challenges with POST', () => {
             },
             failOnStatusCode: false
         }).then((response) => {
-            expect(response.status).to.eqls(400);
-            // Verify response body
-            expect(response.body.errorMessages[0]).to.eqls(
-                'Failed Validation: Maximum allowable length exceeded for title - maximum allowed is 50'
-            );
+            expect(response.status).to.eqls(201);
             // Verify that challenge is complited
-            cy.verifyChallenge(10);
+            cy.verifyChallenge(12);
         });
     });
+
+    /*Issue a POST request to create a todo but fail payload length validation
+     on the `description` because your whole payload exceeds maximum allowable 5000 characters. */
+    it('POST /todos (413) content too long', () => {
+        // Generate test data
+        const randomTask = {
+            title: faker.lorem.word(),
+            doneStatus: true,
+            description: faker.string.sample(5001)
+        };
+
+        cy.log(randomTask.title);
+        cy.api({
+            method: 'POST',
+            url: '/todos',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            body: {
+                title: randomTask.title,
+                doneStatus: randomTask.doneStatus,
+                description: randomTask.description
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(413);
+            // Verify response body
+            expect(response.body.errorMessages[0]).to.eqls(
+                'Error: Request body too large, max allowed is 5000 bytes'
+            );
+            // Verify that challenge is complited
+            cy.verifyChallenge(13);
+        });
+    });
+
+    /*Issue a POST request to create a todo but fail validation
+     because your payload contains an unrecognised field. */
+     it('POST /todos (400) extra', () => {
+      // Generate test data
+      const randomTask = {
+          title: faker.lorem.word(),
+          doneStatus: true,
+          description: faker.string.sample(20)
+      };
+
+      cy.log(randomTask.title);
+      cy.api({
+          method: 'POST',
+          url: '/todos',
+          headers: {
+              'X-Challenger': Cypress.env('X-Challenger')
+          },
+          body: {
+              title: randomTask.title,
+              doneStatus: randomTask.doneStatus,
+              description: randomTask.description,
+              extra: 'val'
+          },
+          failOnStatusCode: false
+      }).then((response) => {
+          expect(response.status).to.eqls(400);
+          // Verify response body
+          expect(response.body.errorMessages[0]).to.eqls(
+              "Could not find field: extra"
+          );
+          // Verify that challenge is complited
+          cy.verifyChallenge(14);
+      });
+  });
 });
