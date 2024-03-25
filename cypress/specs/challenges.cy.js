@@ -644,3 +644,31 @@ describe('Update Challenges with PUT', () => {
         });
     });
 });
+
+describe('DELETE Challenges', () => {
+    /*Issue a DELETE request to successfully delete a todo*/
+    it.only('DELETE /todos/{id} (200', () => {
+        cy.api({
+            method: 'DELETE',
+            url: '/todos/7',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(200);
+        });
+        // Verify that item is deleted
+        cy.api({
+            method: 'GET',
+            url: '/todos/7',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(404);
+        });
+        cy.verifyChallenge(22);
+    });
+});
