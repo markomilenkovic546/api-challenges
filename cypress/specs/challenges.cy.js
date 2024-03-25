@@ -614,7 +614,7 @@ describe('Update Challenges with PUT', () => {
     });
 
     /*Issue a PUT request to fail to update an existing todo because id different in payload.*/
-    it.only('PUT /todos/{id} no amend id (400)', () => {
+    it('PUT /todos/{id} no amend id (400)', () => {
         // Generate test data
         const randomTask = {
             title: faker.lorem.word(),
@@ -647,7 +647,7 @@ describe('Update Challenges with PUT', () => {
 
 describe('DELETE Challenges', () => {
     /*Issue a DELETE request to successfully delete a todo*/
-    it.only('DELETE /todos/{id} (200', () => {
+    it('DELETE /todos/{id} (200', () => {
         cy.api({
             method: 'DELETE',
             url: '/todos/7',
@@ -677,15 +677,35 @@ describe('OPTIONS Challenges', () => {
     /*Issue an OPTIONS request on the `/todos` end point.
    You might want to manually check the
    'Allow' header in the response is as expected. */
-    it.only('OPTIONS /todos (200)', () => {
+    it('OPTIONS /todos (200)', () => {
         cy.api({
             method: 'OPTIONS',
             url: '/todos',
-            body: {}
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            }
         }).then((response) => {
             const allow = response.headers['allow'];
             expect(allow).to.eqls('OPTIONS, GET, HEAD, POST');
         });
         cy.verifyChallenge(23);
+    });
+});
+
+describe('Accept Challenges', () => {
+    /*Issue a GET request on the `/todos` end point with an `Accept` header
+   of `application/xml` to receive results in XML format*/
+    it.only('GET /todos (200) XML', () => {
+        cy.api({
+            method: 'GET',
+            url: '/todos',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger'),
+                Accept: 'application/xml'
+            }
+        }).then((response) => {
+            expect(response.headers['content-type']).to.eqls('application/xml');
+        });
+        cy.verifyChallenge(24);
     });
 });
