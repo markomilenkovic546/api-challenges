@@ -815,16 +815,43 @@ describe('Content-Type Challenges', () => {
                 Accept: 'application/xml',
                 'Content-Type': 'application/xml'
             },
-            body:
-            `<todo>
+            body: `<todo>
             <doneStatus>${randomTask.doneStatus}</doneStatus>
             <title>${randomTask.description}</title>
           </todo>`,
-            
             failOnStatusCode: false
         }).then((response) => {
             expect(response.status).to.eqls(201);
         });
         cy.verifyChallenge(30);
+    });
+
+    /*Issue a POST request on the `/todos` end point to create a todo using Content-Type `application/json`,
+      and Accepting only JSON ie. Accept header of `application/json`*/
+    it.only('POST /todos JSON', () => {
+        // Generate test data
+        const randomTask = {
+            title: faker.lorem.word(),
+            doneStatus: true,
+            description: faker.string.sample(20)
+        };
+        cy.api({
+            method: 'POST',
+            url: '/todos',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger'),
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: {
+                title: randomTask.title,
+                doneStatus: randomTask.doneStatus,
+                description: randomTask.description
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(201);
+        });
+        cy.verifyChallenge(31);
     });
 });
