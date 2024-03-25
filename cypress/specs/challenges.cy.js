@@ -780,7 +780,7 @@ Issue a GET request on the `/todos` end point with no `Accept` header present in
     /*	
 Issue a GET request on the `/todos` end point with an `Accept` header
  `application/gzip` to receive 406 'NOT ACCEPTABLE' status code*/
-    it.only('GET /todos (406)', () => {
+    it('GET /todos (406)', () => {
         cy.api({
             method: 'GET',
             url: '/todos',
@@ -800,7 +800,7 @@ Issue a GET request on the `/todos` end point with an `Accept` header
 describe('Content-Type Challenges', () => {
     /*Issue a POST request on the `/todos` end point to create a todo using Content-Type `application/xml`,
    and Accepting only XML ie. Accept header of `application/xml`*/
-    it.only('POST /todos XML', () => {
+    it('POST /todos XML', () => {
         // Generate test data
         const randomTask = {
             title: faker.lorem.word(),
@@ -828,7 +828,7 @@ describe('Content-Type Challenges', () => {
 
     /*Issue a POST request on the `/todos` end point to create a todo using Content-Type `application/json`,
       and Accepting only JSON ie. Accept header of `application/json`*/
-    it.only('POST /todos JSON', () => {
+    it('POST /todos JSON', () => {
         // Generate test data
         const randomTask = {
             title: faker.lorem.word(),
@@ -854,4 +854,33 @@ describe('Content-Type Challenges', () => {
         });
         cy.verifyChallenge(31);
     });
+/*Issue a POST request on the `/todos` end point
+ with an unsupported content type to generate a 415 status code*/
+    it('POST /todos JSON', () => {
+      // Generate test data
+      const randomTask = {
+          title: faker.lorem.word(),
+          doneStatus: true,
+          description: faker.string.sample(20)
+      };
+      cy.api({
+          method: 'POST',
+          url: '/todos',
+          headers: {
+              'X-Challenger': Cypress.env('X-Challenger'),
+              Accept: '*/*',
+              'Content-Type': 'hello'
+          },
+          body: {
+              title: randomTask.title,
+              doneStatus: randomTask.doneStatus,
+              description: randomTask.description
+          },
+          failOnStatusCode: false
+      }).then((response) => {
+          expect(response.status).to.eqls(415);
+          expect(response.body.errorMessages[0]).to.eqls('Unsupported Content Type - hello')
+      });
+      cy.verifyChallenge(31);
+  });
 });
