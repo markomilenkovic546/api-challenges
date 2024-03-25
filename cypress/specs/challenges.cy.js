@@ -672,3 +672,20 @@ describe('DELETE Challenges', () => {
         cy.verifyChallenge(22);
     });
 });
+
+describe('OPTIONS Challenges', () => {
+    /*Issue an OPTIONS request on the `/todos` end point.
+   You might want to manually check the
+   'Allow' header in the response is as expected. */
+    it.only('OPTIONS /todos (200)', () => {
+        cy.api({
+            method: 'OPTIONS',
+            url: '/todos',
+            body: {}
+        }).then((response) => {
+            const allow = response.headers['allow'];
+            expect(allow).to.eqls('OPTIONS, GET, HEAD, POST');
+        });
+        cy.verifyChallenge(23);
+    });
+});
