@@ -695,7 +695,7 @@ describe('OPTIONS Challenges', () => {
 describe('Accept Challenges', () => {
     /*Issue a GET request on the `/todos` end point with an `Accept` header
    of `application/xml` to receive results in XML format*/
-    it.only('GET /todos (200) XML', () => {
+    it('GET /todos (200) XML', () => {
         cy.api({
             method: 'GET',
             url: '/todos',
@@ -707,5 +707,21 @@ describe('Accept Challenges', () => {
             expect(response.headers['content-type']).to.eqls('application/xml');
         });
         cy.verifyChallenge(24);
+    });
+
+    /* Issue a GET request on the `/todos` end point with an `Accept` header
+     of `application/json` to receive results in JSON format*/
+    it('GET /todos (200) JSON', () => {
+      cy.api({
+        method: 'GET',
+        url: '/todos',
+        headers: {
+            'X-Challenger': Cypress.env('X-Challenger'),
+            Accept: 'application/json'
+        }
+    }).then((response) => {
+        expect(response.headers['content-type']).to.eqls('application/json');
+    });
+    cy.verifyChallenge(25);
     });
 });
