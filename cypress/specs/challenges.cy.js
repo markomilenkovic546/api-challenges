@@ -198,6 +198,107 @@ describe('Creation Challenges with POST', () => {
                 response.body.doneStatus,
                 response.body.description
             );
+            // Verify that challenge is complited
+            cy.verifyChallenge(8);
         });
     });
+
+    // Issue a POST request to create a todo but fail validation on the `doneStatus` field
+    it('POST /todos (400) doneStatus', () => {
+        // Generate test data
+        const randomTask = {
+            title: faker.lorem.words(),
+            doneStatus: true,
+            description: faker.lorem.sentence()
+        };
+        cy.api({
+            method: 'POST',
+            url: '/todos',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            body: {
+                title: randomTask.title,
+                doneStatus: 2,
+                description: randomTask.description
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(400);
+            // Verify response body
+            expect(response.body.errorMessages[0]).to.eqls(
+                'Failed Validation: doneStatus should be BOOLEAN but was NUMERIC'
+            );
+            // Verify that challenge is complited
+            cy.verifyChallenge(9);
+        });
+    });
+
+    /* Issue a POST request to create a todo but fail length validation on the
+     `title` field because your title exceeds maximum allowable characters. */
+    it('POST /todos (400) title too long', () => {
+      // Generate test data
+      const randomTask = {
+          title: faker.string.sample(51),
+          doneStatus: true,
+          description: faker.lorem.sentence()
+      };
+
+      cy.log(randomTask.title)
+      cy.api({
+          method: 'POST',
+          url: '/todos',
+          headers: {
+              'X-Challenger': Cypress.env('X-Challenger')
+          },
+          body: {
+              title: randomTask.title,
+              doneStatus: randomTask.doneStatus,
+              description: randomTask.description
+          },
+          failOnStatusCode: false
+      }).then((response) => {
+          expect(response.status).to.eqls(400);
+          // Verify response body
+          expect(response.body.errorMessages[0]).to.eqls(
+              'Failed Validation: Maximum allowable length exceeded for title - maximum allowed is 50'
+          );
+          // Verify that challenge is complited
+          cy.verifyChallenge(10);
+      });
+  });
+
+  /*Issue a POST request to create a todo but fail length validation on the `description`
+   because your description exceeds maximum allowable characters. */
+     it('POST /todos (400) description too long', () => {
+      // Generate test data
+      const randomTask = {
+          title: faker.lorem.word(),
+          doneStatus: true,
+          description: faker.string.sample(201)
+      };
+
+      cy.log(randomTask.title)
+      cy.api({
+          method: 'POST',
+          url: '/todos',
+          headers: {
+              'X-Challenger': Cypress.env('X-Challenger')
+          },
+          body: {
+              title: randomTask.title,
+              doneStatus: randomTask.doneStatus,
+              description: randomTask.description
+          },
+          failOnStatusCode: false
+      }).then((response) => {
+          expect(response.status).to.eqls(400);
+          // Verify response body
+          expect(response.body.errorMessages[0]).to.eqls(
+              'Failed Validation: Maximum allowable length exceeded for description - maximum allowed is 200'
+          );
+          // Verify that challenge is complited
+          cy.verifyChallenge(11);
+      });
+  });
 });
