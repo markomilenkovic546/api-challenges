@@ -685,6 +685,7 @@ describe('OPTIONS Challenges', () => {
                 'X-Challenger': Cypress.env('X-Challenger')
             }
         }).then((response) => {
+            expect(response.status).to.eqls(200);
             const allow = response.headers['allow'];
             expect(allow).to.eqls('OPTIONS, GET, HEAD, POST');
         });
@@ -704,6 +705,7 @@ describe('Accept Challenges', () => {
                 Accept: 'application/xml'
             }
         }).then((response) => {
+            expect(response.status).to.eqls(200);
             expect(response.headers['content-type']).to.eqls('application/xml');
         });
         cy.verifyChallenge(24);
@@ -720,12 +722,13 @@ describe('Accept Challenges', () => {
                 Accept: 'application/json'
             }
         }).then((response) => {
+            expect(response.status).to.eqls(200);
             expect(response.headers['content-type']).to.eqls('application/json');
         });
         cy.verifyChallenge(25);
     });
 
-    it.only('GET /todos (200) ANY', () => {
+    it('GET /todos (200) ANY', () => {
         cy.api({
             method: 'GET',
             url: '/todos',
@@ -734,8 +737,43 @@ describe('Accept Challenges', () => {
                 Accept: '*/*'
             }
         }).then((response) => {
+            expect(response.status).to.eqls(200);
             expect(response.headers['content-type']).to.eqls('application/json');
         });
         cy.verifyChallenge(26);
+    });
+
+    /*Issue a GET request on the `/todos` end point with an `Accept` header of `application/xml, application/json` 
+    to receive results in the preferred XML format*/
+    it('GET /todos (200) XML pref', () => {
+        cy.api({
+            method: 'GET',
+            url: '/todos',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger'),
+                Accept: 'application/xml, application/json'
+            }
+        }).then((response) => {
+            expect(response.status).to.eqls(200);
+            expect(response.headers['content-type']).to.eqls('application/xml');
+        });
+        cy.verifyChallenge(27);
+    });
+
+    /*	
+Issue a GET request on the `/todos` end point with no `Accept` header present in
+ the message to receive results in default JSON format*/
+    it('GET /todos (200) no accept', () => {
+        cy.api({
+            method: 'GET',
+            url: '/todos',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            }
+        }).then((response) => {
+            expect(response.status).to.eqls(200);
+            expect(response.headers['content-type']).to.eqls('application/json');
+        });
+        cy.verifyChallenge(28);
     });
 });
