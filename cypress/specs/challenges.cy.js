@@ -776,4 +776,23 @@ Issue a GET request on the `/todos` end point with no `Accept` header present in
         });
         cy.verifyChallenge(28);
     });
+
+    /*	
+Issue a GET request on the `/todos` end point with an `Accept` header
+ `application/gzip` to receive 406 'NOT ACCEPTABLE' status code*/
+    it.only('GET /todos (406)', () => {
+        cy.api({
+            method: 'GET',
+            url: '/todos',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger'),
+                Accept: 'application/gzip'
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(406);
+            expect(response.body.errorMessages[0]).to.eqls('Unrecognised Accept Type');
+        });
+        cy.verifyChallenge(29);
+    });
 });
