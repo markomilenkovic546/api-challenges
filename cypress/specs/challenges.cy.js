@@ -582,4 +582,34 @@ describe('Update Challenges with PUT', () => {
             cy.verifyChallenge(19);
         });
     });
+
+    /* Issue a PUT request to fail to update an existing
+     todo because title is missing in payload.*/
+    it.only('PUT /todos/{id} no title (400)', () => {
+        // Generate test data
+        const randomTask = {
+            title: faker.lorem.word(),
+            doneStatus: true,
+            description: faker.string.sample(20)
+        };
+        cy.api({
+            method: 'PUT',
+            url: '/todos/5',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            body: {
+                doneStatus: randomTask.doneStatus,
+                description: randomTask.description
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(400);
+            expect(response.body.errorMessages[0]).to.eqls(
+              'title : field is mandatory'
+          );
+            // Verify that challenge is complited
+            cy.verifyChallenge(20);
+        });
+    });
 });
