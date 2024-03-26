@@ -10,6 +10,6 @@ This repository contains Cypress tests written to complete a series of API testi
 
 To get started with running the tests, follow these steps:
 
-1. **Clone the Repository**: Clone this repository to your local machine using the following command:
+1. **Clone the Repository**: Clone this repository to your local machine
 2. **Install Dependencies using the following command**: `npm install`
 3. **Run the Tests**: Execute all tests using the following command: `npm run api-tests`
