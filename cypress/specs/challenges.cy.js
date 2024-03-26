@@ -15,7 +15,7 @@ describe('Challenger session creation', () => {
         });
     });
 
-    /* Issue a GET request on the `/challenges` end point*/
+    /* Issue a GET request on the `/challenges` endpoint*/
     it('GET /challenges (200)', () => {
         cy.api({
             method: 'GET',
@@ -31,7 +31,7 @@ describe('Challenger session creation', () => {
 });
 
 describe('GET Challenges', () => {
-    // Issue a GET request on the `/todos` end point
+    // Issue a GET request on the `/todos` endpoint
     it('GET /todos (200)', () => {
         cy.api({
             method: 'GET',
@@ -51,7 +51,7 @@ describe('GET Challenges', () => {
         });
     });
 
-    // Issue a GET request on the `/todo` end point should 404 because nouns should be plural
+    // Issue a GET request on the `/todo` endpoint should 404 because nouns should be plural
     it('GET /todo (404) not plural', () => {
         cy.api({
             method: 'GET',
@@ -66,7 +66,7 @@ describe('GET Challenges', () => {
             cy.verifyChallenge(3);
         });
     });
-    // Issue a GET request on the `/todos/{id}` end point to return a specific todo
+    // Issue a GET request on the `/todos/{id}` endpoint to return a specific todo
     it('GET /todos/{id} (200)', () => {
         cy.api({
             method: 'GET',
@@ -104,7 +104,7 @@ describe('GET Challenges', () => {
         });
     });
 
-    /*Issue a GET request on the `/todos` end point with a query filter 
+    /*Issue a GET request on the `/todos` endpoint with a query filter 
      to get only todos which are 'done'. 
     There must exist both 'done' and 'not done' todos, to pass this challenge. */
     it('GET /todos (200) ?filter', () => {
@@ -145,7 +145,7 @@ describe('GET Challenges', () => {
 });
 
 describe('HEAD Challenges', () => {
-    // Issue a HEAD request on the `/todos` end point
+    // Issue a HEAD request on the `/todos` endpoint
     it('HEAD /todos (200)', () => {
         cy.api({
             method: 'HEAD',
@@ -674,7 +674,7 @@ describe('DELETE Challenges', () => {
 });
 
 describe('OPTIONS Challenges', () => {
-    /*Issue an OPTIONS request on the `/todos` end point.
+    /*Issue an OPTIONS request on the `/todos` endpoint.
    You might want to manually check the
    'Allow' header in the response is as expected. */
     it('OPTIONS /todos (200)', () => {
@@ -694,7 +694,7 @@ describe('OPTIONS Challenges', () => {
 });
 
 describe('Accept Challenges', () => {
-    /*Issue a GET request on the `/todos` end point with an `Accept` header
+    /*Issue a GET request on the `/todos` endpoint with an `Accept` header
    of `application/xml` to receive results in XML format*/
     it('GET /todos (200) XML', () => {
         cy.api({
@@ -711,7 +711,7 @@ describe('Accept Challenges', () => {
         cy.verifyChallenge(24);
     });
 
-    /* Issue a GET request on the `/todos` end point with an `Accept` header
+    /* Issue a GET request on the `/todos` endpoint with an `Accept` header
      of `application/json` to receive results in JSON format*/
     it('GET /todos (200) JSON', () => {
         cy.api({
@@ -743,7 +743,7 @@ describe('Accept Challenges', () => {
         cy.verifyChallenge(26);
     });
 
-    /*Issue a GET request on the `/todos` end point with an `Accept` header of `application/xml, application/json` 
+    /*Issue a GET request on the `/todos` endpoint with an `Accept` header of `application/xml, application/json` 
     to receive results in the preferred XML format*/
     it('GET /todos (200) XML pref', () => {
         cy.api({
@@ -761,7 +761,7 @@ describe('Accept Challenges', () => {
     });
 
     /*	
-Issue a GET request on the `/todos` end point with no `Accept` header present in
+Issue a GET request on the `/todos` endpoint with no `Accept` header present in
  the message to receive results in default JSON format*/
     it('GET /todos (200) no accept', () => {
         cy.api({
@@ -778,7 +778,7 @@ Issue a GET request on the `/todos` end point with no `Accept` header present in
     });
 
     /*	
-Issue a GET request on the `/todos` end point with an `Accept` header
+Issue a GET request on the `/todos` endpoint with an `Accept` header
  `application/gzip` to receive 406 'NOT ACCEPTABLE' status code*/
     it('GET /todos (406)', () => {
         cy.api({
@@ -798,7 +798,7 @@ Issue a GET request on the `/todos` end point with an `Accept` header
 });
 
 describe('Content-Type Challenges', () => {
-    /*Issue a POST request on the `/todos` end point to create a todo using Content-Type `application/xml`,
+    /*Issue a POST request on the `/todos` endpoint to create a todo using Content-Type `application/xml`,
    and Accepting only XML ie. Accept header of `application/xml`*/
     it('POST /todos XML', () => {
         // Generate test data
@@ -826,7 +826,7 @@ describe('Content-Type Challenges', () => {
         cy.verifyChallenge(30);
     });
 
-    /*Issue a POST request on the `/todos` end point to create a todo using Content-Type `application/json`,
+    /*Issue a POST request on the `/todos` endpoint to create a todo using Content-Type `application/json`,
       and Accepting only JSON ie. Accept header of `application/json`*/
     it('POST /todos JSON', () => {
         // Generate test data
@@ -854,7 +854,7 @@ describe('Content-Type Challenges', () => {
         });
         cy.verifyChallenge(31);
     });
-    /*Issue a POST request on the `/todos` end point
+    /*Issue a POST request on the `/todos` endpoint
  with an unsupported content type to generate a 415 status code*/
     it('POST /todos JSON', () => {
         // Generate test data
@@ -889,7 +889,7 @@ describe('Content-Type Challenges', () => {
 
 describe('Restore session', () => {
     /*	
-  Issue a GET request on the `/challenger/{guid}` end point,
+  Issue a GET request on the `/challenger/{guid}` endpoint,
   with an existing challenger GUID. This will return the progress data payload that
  can be used to later restore your progress to this status.*/
     it('GET /challenger/guid (existing X-CHALLENGER)', () => {
@@ -906,9 +906,9 @@ describe('Restore session', () => {
         cy.verifyChallenge(33);
     });
 
-    /*Issue a PUT request on the `/challenger/{guid}` end point, with an existing
+    /*Issue a PUT request on the `/challenger/{guid}` endpoint, with an existing
      challenger GUID to restore that challenger's progress into memory.*/
-    it.only('PUT /challenger/guid RESTORE', () => {
+    it('PUT /challenger/guid RESTORE', () => {
         cy.api({
             method: 'GET',
             url: `/challenger/${Cypress.env('X-Challenger')}`,
@@ -932,5 +932,39 @@ describe('Restore session', () => {
             });
         });
         cy.verifyChallenge(34);
+    });
+    /*Issue a PUT request on the `/challenger/{guid}` endpoint,
+ with a challenger GUID not currently
+ in memory to restore that challenger's progress into memory.*/
+    it.skip('PUT /challenger/guid CREATE', () => {
+        cy.api({
+            method: 'PUT',
+            url: `/challenger/9cde668e-53d6-46e5-aeae-55473a20e6f6`,
+            headers: {
+                'X-Challenger': '9cde668e-53d6-46e5-aeae-55473a20e6f6'
+            },
+            body: payload,
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(200);
+        });
+        cy.verifyChallenge(35);
+    });
+
+    /*Issue a GET request on the `/challenger/database/{guid}` end point, 
+       to retrieve the current todos database for the user.
+        You can use this to restore state later. */
+    it.only('GET /challenger/database/guid (200)', () => {
+        cy.api({
+            method: 'GET',
+            url: `/challenger/database/${Cypress.env('X-Challenger')}`,
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(200);
+        });
+        cy.verifyChallenge(36);
     });
 });
