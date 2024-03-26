@@ -1259,7 +1259,6 @@ describe('Authorization Challenges', () => {
             failOnStatusCode: false
         }).then((response) => {
             const xAuthToken = response.headers['x-auth-token'];
-
             cy.api({
                 method: 'GET',
                 url: '/secret/note',
@@ -1292,7 +1291,6 @@ describe('Authorization Challenges', () => {
             failOnStatusCode: false
         }).then((response) => {
             const xAuthToken = response.headers['x-auth-token'];
-
             cy.api({
                 method: 'POST',
                 url: '/secret/note',
@@ -1324,7 +1322,6 @@ describe('Authorization Challenges', () => {
             failOnStatusCode: false
         }).then((response) => {
             const xAuthToken = response.headers['x-auth-token'];
-
             cy.api({
                 method: 'POST',
                 url: '/secret/note',
@@ -1358,7 +1355,6 @@ Issue a POST request on the `/secret/note` end point
             failOnStatusCode: false
         }).then((response) => {
             const xAuthToken = response.headers['x-auth-token'];
-
             cy.api({
                 method: 'POST',
                 url: '/secret/note',
@@ -1392,9 +1388,41 @@ Issue a POST request on the `/secret/note` end point
             failOnStatusCode: false
         }).then((response) => {
             const xAuthToken = response.headers['x-auth-token'];
-
             cy.api({
                 method: 'GET',
+                url: '/secret/note',
+                headers: {
+                    'X-Challenger': Cypress.env('X-Challenger'),
+                    Authorization: `Bearer ${xAuthToken}`
+                },
+                failOnStatusCode: false
+            }).then((response) => {
+                expect(response.status).to.eqls(200);
+            });
+        });
+        cy.verifyChallenge(55);
+    });
+
+    /*Issue a POST request on the `/secret/note` end point with a note payload
+     e.g. {"note":"my note"} and receive 200 when valid X-AUTH-TOKEN value used
+      as an Authorization Bearer token. Status code 200 received.
+     Note is maximum length 100 chars and will be truncated when stored.*/
+    it.only('POST /secret/note (Bearer)', () => {
+        cy.api({
+            method: 'POST',
+            url: '/secret/token',
+            auth: {
+                username: 'admin',
+                password: 'password'
+            },
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            const xAuthToken = response.headers['x-auth-token'];
+            cy.api({
+                method: 'POST',
                 url: '/secret/note',
                 headers: {
                     'X-Challenger': Cypress.env('X-Challenger'),
@@ -1406,6 +1434,6 @@ Issue a POST request on the `/secret/note` end point
                 expect(response.status).to.eqls(200);
             });
         });
-        cy.verifyChallenge(55);
+        cy.verifyChallenge(56);
     });
 });
