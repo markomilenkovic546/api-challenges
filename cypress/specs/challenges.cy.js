@@ -1170,7 +1170,7 @@ Issue a POST request on the `/heartbeat` end point
 describe('Authentication Challenges', () => {
     /*Issue a POST request on the `/secret/token` end point and receive 401 when
      Basic auth username/password is not admin/password*/
-    it.only('POST /secret/token (401)', () => {
+    it('POST /secret/token (401)', () => {
         cy.api({
             method: 'POST',
             url: '/secret/token',
@@ -1190,7 +1190,7 @@ describe('Authentication Challenges', () => {
 
     /*Issue a POST request on the `/secret/token` end point
          and receive 201 when Basic auth username/password is admin/password*/
-    it.only('POST /secret/token (201)', () => {
+    it('POST /secret/token (201)', () => {
         cy.api({
             method: 'POST',
             url: '/secret/token',
@@ -1212,7 +1212,7 @@ describe('Authentication Challenges', () => {
 describe('Authorization Challenges', () => {
     /* Issue a GET request on the `/secret/note`
      end point and receive 403 when X-AUTH-TOKEN does not match a valid token*/
-    it.only('GET /secret/note (403)', () => {
+    it('GET /secret/note (403)', () => {
         cy.api({
             method: 'GET',
             url: '/secret/note',
@@ -1229,7 +1229,7 @@ describe('Authorization Challenges', () => {
 
     /*Issue a GET request on the `/secret/note` endpoint
      and receive 401 when no X-AUTH-TOKEN header present*/
-    it.only('GET /secret/note (401)', () => {
+    it('GET /secret/note (401)', () => {
         cy.api({
             method: 'GET',
             url: '/secret/note',
@@ -1245,7 +1245,7 @@ describe('Authorization Challenges', () => {
 
     /*Issue a GET request on the `/secret/note` end point receive 200 when
      valid X-AUTH-TOKEN used - response body should contain the note*/
-    it.only('GET /secret/note (200)', () => {
+    it('GET /secret/note (200)', () => {
         cy.api({
             method: 'POST',
             url: '/secret/token',
@@ -1273,5 +1273,39 @@ describe('Authorization Challenges', () => {
             });
         });
         cy.verifyChallenge(51);
+    });
+
+    /*Issue a POST request on the `/secret/note`
+     end point with a note payload e.g. {"note":"my note"} and receive 200 when valid X-AUTH-TOKEN used.
+     Note is maximum length 100 chars and will be truncated when stored.*/
+    it.only('POST /secret/note (200)', () => {
+        cy.api({
+            method: 'POST',
+            url: '/secret/token',
+            auth: {
+                username: 'admin',
+                password: 'password'
+            },
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            const xAuthToken = response.headers['x-auth-token'];
+
+            cy.api({
+                method: 'POST',
+                url: '/secret/note',
+                headers: {
+                    'X-Challenger': Cypress.env('X-Challenger'),
+                    'X-AUTH-TOKEN': xAuthToken
+                },
+                body: { note: `${faker.lorem.word()}` },
+                failOnStatusCode: false
+            }).then((response) => {
+                expect(response.status).to.eqls(200);
+            });
+        });
+        cy.verifyChallenge(52);
     });
 });
