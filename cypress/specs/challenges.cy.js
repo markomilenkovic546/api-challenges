@@ -1441,7 +1441,7 @@ Issue a POST request on the `/secret/note` end point
 describe('Miscellaneous Challenges', () => {
     /*Issue a DELETE request to successfully delete the last todo in system
      so that there are no more todos in the system*/
-    it.only('DELETE /todos/{id} (200) all', () => {
+    it('DELETE /todos/{id} (200) all', () => {
         cy.api({
             method: 'GET',
             url: '/todos',
@@ -1471,5 +1471,33 @@ describe('Miscellaneous Challenges', () => {
             });
         });
         cy.verifyChallenge(57);
+    });
+
+    /*Issue as many POST requests as it takes to add the maximum number of TODOS allowed for a user.
+       The maximum number should be listed in the documentation.*/
+    it.only('POST /todos (201) all', () => {
+        cy.deleteAllTodos();
+        // Generate test data
+        const randomTask = {
+            title: faker.lorem.words(),
+            doneStatus: true,
+            description: faker.lorem.sentence()
+        };
+        for (let i = 0; i < 21; i++) {
+            cy.api({
+                method: 'POST',
+                url: '/todos',
+                headers: {
+                    'X-Challenger': Cypress.env('X-Challenger')
+                },
+                body: {
+                    title: randomTask.title,
+                    doneStatus: randomTask.doneStatus,
+                    description: randomTask.description
+                },
+                failOnStatusCode: false
+            });
+        }
+        cy.verifyChallenge(58);
     });
 });
