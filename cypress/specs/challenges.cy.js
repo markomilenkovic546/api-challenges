@@ -46,7 +46,7 @@ describe('GET Challenges', () => {
                 const isValid = tv4.validate(response.body, schema);
                 expect(isValid).to.be.true;
             });
-            // Verify that challenge is complited
+            // Verify that challenge is successfully complete  
             cy.verifyChallenge(2);
         });
     });
@@ -62,7 +62,7 @@ describe('GET Challenges', () => {
             failOnStatusCode: false
         }).then((response) => {
             expect(response.status).to.eqls(404);
-            // Verify that challenge is complited
+            // Verify that challenge is successfully complete 
             cy.verifyChallenge(3);
         });
     });
@@ -83,7 +83,7 @@ describe('GET Challenges', () => {
                 const isValid = tv4.validate(response.body, schema);
                 expect(isValid).to.be.true;
             });
-            // Verify that challenge is complited
+            // Verify that challenge is successfully complete 
             cy.verifyChallenge(4);
         });
     });
@@ -99,7 +99,7 @@ describe('GET Challenges', () => {
             failOnStatusCode: false
         }).then((response) => {
             expect(response.status).to.eqls(404);
-            // Verify that challenge is complited
+            // Verify that challenge is successfully complete 
             cy.verifyChallenge(5);
         });
     });
@@ -138,7 +138,7 @@ describe('GET Challenges', () => {
                 const isValid = tv4.validate(response.body, schema);
                 expect(isValid).to.be.true;
             });
-            // Verify that challenge is complited
+            // Verify that challenge is successfully complete 
             cy.verifyChallenge(6);
         });
     });
@@ -155,7 +155,7 @@ describe('HEAD Challenges', () => {
             }
         }).then((response) => {
             expect(response.status).to.eqls(200);
-            // Verify that challenge is complited
+            // Verify that challenge is successfully complete 
             cy.verifyChallenge(7);
         });
     });
@@ -198,7 +198,7 @@ describe('Creation Challenges with POST', () => {
                 response.body.doneStatus,
                 response.body.description
             );
-            // Verify that challenge is complited
+            // Verify that challenge is successfully complete 
             cy.verifyChallenge(8);
         });
     });
@@ -229,7 +229,7 @@ describe('Creation Challenges with POST', () => {
             expect(response.body.errorMessages[0]).to.eqls(
                 'Failed Validation: doneStatus should be BOOLEAN but was NUMERIC'
             );
-            // Verify that challenge is complited
+            // Verify that challenge is successfully complete 
             cy.verifyChallenge(9);
         });
     });
@@ -263,7 +263,7 @@ describe('Creation Challenges with POST', () => {
             expect(response.body.errorMessages[0]).to.eqls(
                 'Failed Validation: Maximum allowable length exceeded for title - maximum allowed is 50'
             );
-            // Verify that challenge is complited
+            // Verify that challenge is successfully complete 
             cy.verifyChallenge(10);
         });
     });
@@ -297,7 +297,7 @@ describe('Creation Challenges with POST', () => {
             expect(response.body.errorMessages[0]).to.eqls(
                 'Failed Validation: Maximum allowable length exceeded for description - maximum allowed is 200'
             );
-            // Verify that challenge is complited
+            // Verify that challenge is successfully complete 
             cy.verifyChallenge(11);
         });
     });
@@ -327,7 +327,7 @@ describe('Creation Challenges with POST', () => {
             failOnStatusCode: false
         }).then((response) => {
             expect(response.status).to.eqls(201);
-            // Verify that challenge is complited
+            // Verify that challenge is successfully complete 
             cy.verifyChallenge(12);
         });
     });
@@ -361,7 +361,7 @@ describe('Creation Challenges with POST', () => {
             expect(response.body.errorMessages[0]).to.eqls(
                 'Error: Request body too large, max allowed is 5000 bytes'
             );
-            // Verify that challenge is complited
+            // Verify that challenge is successfully complete 
             cy.verifyChallenge(13);
         });
     });
@@ -396,7 +396,7 @@ describe('Creation Challenges with POST', () => {
             expect(response.body.errorMessages[0]).to.eqls(
                 'Could not find field: extra'
             );
-            // Verify that challenge is complited
+            // Verify that challenge is successfully complete 
             cy.verifyChallenge(14);
         });
     });
@@ -428,7 +428,7 @@ describe('Creation Challenges with PUT', () => {
             expect(response.body.errorMessages[0]).to.eqls(
                 'Cannot create todo with PUT due to Auto fields id'
             );
-            // Verify that challenge is complited
+            // Verify that challenge is successfully complete 
             cy.verifyChallenge(15);
         });
     });
@@ -472,7 +472,7 @@ describe('Update Challenges with POST', () => {
                 response.body.doneStatus,
                 response.body.description
             );
-            // Verify that challenge is complited
+            // Verify that challenge is successfully complete 
             cy.verifyChallenge(16);
         });
     });
@@ -499,7 +499,7 @@ describe('Update Challenges with POST', () => {
             failOnStatusCode: false
         }).then((response) => {
             expect(response.status).to.eqls(404);
-            // Verify that challenge is complited
+            // Verify that challenge is successfully complete 
             cy.verifyChallenge(17);
         });
     });
@@ -544,7 +544,7 @@ describe('Update Challenges with PUT', () => {
                 response.body.doneStatus,
                 response.body.description
             );
-            // Verify that challenge is complited
+            // Verify that challenge is successfully complete 
             cy.verifyChallenge(18);
         });
     });
@@ -578,7 +578,7 @@ describe('Update Challenges with PUT', () => {
                 const isValid = tv4.validate(response.body, schema);
                 expect(isValid).to.be.true;
             });
-            // Verify that challenge is complited
+            // Verify that challenge is successfully complete 
             cy.verifyChallenge(19);
         });
     });
@@ -608,7 +608,7 @@ describe('Update Challenges with PUT', () => {
             expect(response.body.errorMessages[0]).to.eqls(
                 'title : field is mandatory'
             );
-            // Verify that challenge is complited
+            // Verify that challenge is successfully complete 
             cy.verifyChallenge(20);
         });
     });
@@ -639,7 +639,7 @@ describe('Update Challenges with PUT', () => {
             expect(response.body.errorMessages[0]).to.eqls(
                 'Can not amend id from 7 to 24'
             );
-            // Verify that challenge is complited
+            // Verify that challenge is successfully complete 
             cy.verifyChallenge(21);
         });
     });
@@ -1110,6 +1110,6 @@ describe('Status Code Challenges', () => {
         }).then((response) => {
             expect(response.status).to.eqls(204);
         });
-        cy.verifyChallenge(42);
+        cy.verifyChallenge(43);
     });
 });
