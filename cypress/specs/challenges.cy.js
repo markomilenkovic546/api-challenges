@@ -1374,4 +1374,38 @@ Issue a POST request on the `/secret/note` end point
         });
         cy.verifyChallenge(54);
     });
+
+    /*Issue a GET request on the `/secret/note` end point receive 200
+     when using the X-AUTH-TOKEN value
+     as an Authorization Bearer token - response body should contain the note*/
+    it.only('GET /secret/note (Bearer)', () => {
+        cy.api({
+            method: 'POST',
+            url: '/secret/token',
+            auth: {
+                username: 'admin',
+                password: 'password'
+            },
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            const xAuthToken = response.headers['x-auth-token'];
+
+            cy.api({
+                method: 'GET',
+                url: '/secret/note',
+                headers: {
+                    'X-Challenger': Cypress.env('X-Challenger'),
+                    Authorization: `Bearer ${xAuthToken}`
+                },
+                body: { note: `${faker.lorem.word()}` },
+                failOnStatusCode: false
+            }).then((response) => {
+                expect(response.status).to.eqls(200);
+            });
+        });
+        cy.verifyChallenge(55);
+    });
 });
