@@ -1123,7 +1123,7 @@ describe('HTTP Method Override Challenges', () => {
             url: '/heartbeat',
             headers: {
                 'X-Challenger': Cypress.env('X-Challenger'),
-                'X-HTTP-Method-Override': 'POST'
+                'X-HTTP-Method-Override': 'DELETE'
             },
             failOnStatusCode: false
         }).then((response) => {
@@ -1131,4 +1131,23 @@ describe('HTTP Method Override Challenges', () => {
         });
         cy.verifyChallenge(44);
   });
+
+  /*	
+Issue a POST request on the `/heartbeat` end point
+ and receive 500 when you override the Method Verb to a PATCH*/ 
+  it.only('POST /heartbeat as PATCH (500)', () => {
+    cy.api({
+        method: 'POST',
+        url: '/heartbeat',
+        headers: {
+            'X-Challenger': Cypress.env('X-Challenger'),
+            'X-HTTP-Method-Override': 'PATCH'
+        },
+        failOnStatusCode: false
+    }).then((response) => {
+        expect(response.status).to.eqls(500);
+    });
+    cy.verifyChallenge(45);
+});
+  
 })
