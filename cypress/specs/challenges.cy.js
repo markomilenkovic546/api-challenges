@@ -1065,6 +1065,6 @@ describe('Status Code Challenges', () => {
         }).then((response) => {
             expect(response.status).to.eqls(405);
         });
-        cy.verifyChallenge(41);
+        cy.verifyChallenge(40);
     });
 });
