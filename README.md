@@ -12,4 +12,4 @@ To get started with running the tests, follow these steps:
 
 1. **Clone the Repository**: Clone this repository to your local machine using the following command:
 2. **Install Dependencies**: Run `npm install`
-3. **Run the Tests**: Execute all tests using the following command: npm run api-tests
+3. **Run the Tests**: Execute all tests using the following command: `npm run api-tests`
