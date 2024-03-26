@@ -1277,7 +1277,7 @@ describe('Authorization Challenges', () => {
     /*Issue a POST request on the `/secret/note`
      end point with a note payload e.g. {"note":"my note"} and receive 200 when valid X-AUTH-TOKEN used.
      Note is maximum length 100 chars and will be truncated when stored.*/
-    it.only('POST /secret/note (200)', () => {
+    it('POST /secret/note (200)', () => {
         cy.api({
             method: 'POST',
             url: '/secret/token',
@@ -1308,7 +1308,7 @@ describe('Authorization Challenges', () => {
     });
     /*Issue a POST request on the `/secret/note` end point with a note payload {"note":"my note"}
    and receive 401 when no X-AUTH-TOKEN present*/
-    it.only('POST /secret/note (401)', () => {
+    it('POST /secret/note (401)', () => {
         cy.api({
             method: 'POST',
             url: '/secret/token',
@@ -1341,7 +1341,7 @@ describe('Authorization Challenges', () => {
 Issue a POST request on the `/secret/note` end point
  with a note payload {"note":"my note"} and receive 403
  when X-AUTH-TOKEN does not match a valid token*/
-    it.only('POST /secret/note (403)', () => {
+    it('POST /secret/note (403)', () => {
         cy.api({
             method: 'POST',
             url: '/secret/token',
@@ -1374,7 +1374,7 @@ Issue a POST request on the `/secret/note` end point
     /*Issue a GET request on the `/secret/note` end point receive 200
      when using the X-AUTH-TOKEN value
      as an Authorization Bearer token - response body should contain the note*/
-    it.only('GET /secret/note (Bearer)', () => {
+    it('GET /secret/note (Bearer)', () => {
         cy.api({
             method: 'POST',
             url: '/secret/token',
@@ -1407,7 +1407,7 @@ Issue a POST request on the `/secret/note` end point
      e.g. {"note":"my note"} and receive 200 when valid X-AUTH-TOKEN value used
       as an Authorization Bearer token. Status code 200 received.
      Note is maximum length 100 chars and will be truncated when stored.*/
-    it.only('POST /secret/note (Bearer)', () => {
+    it('POST /secret/note (Bearer)', () => {
         cy.api({
             method: 'POST',
             url: '/secret/token',
@@ -1435,5 +1435,41 @@ Issue a POST request on the `/secret/note` end point
             });
         });
         cy.verifyChallenge(56);
+    });
+});
+
+describe('Miscellaneous Challenges', () => {
+    /*Issue a DELETE request to successfully delete the last todo in system
+     so that there are no more todos in the system*/
+    it.only('DELETE /todos/{id} (200) all', () => {
+        cy.api({
+            method: 'GET',
+            url: '/todos',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            }
+        }).then((response) => {
+            expect(response.status).to.eqls(200);
+            const todos = response.body.todos;
+            todos.forEach((todo) => {
+                cy.api({
+                    method: 'DELETE',
+                    url: `/todos/${todo.id}`,
+                    headers: {
+                        'X-Challenger': Cypress.env('X-Challenger')
+                    }
+                });
+            });
+            cy.api({
+                method: 'GET',
+                url: '/todos',
+                headers: {
+                    'X-Challenger': Cypress.env('X-Challenger')
+                }
+            }).then((response) => {
+                expect(response.body.todos.length).to.eqls(0);
+            });
+        });
+        cy.verifyChallenge(57);
     });
 });
