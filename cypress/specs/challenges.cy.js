@@ -2,7 +2,7 @@ const { faker } = require('@faker-js/faker');
 const tv4 = require('tv4');
 
 describe('Challenger session creation', () => {
-    it.only('Should create a session and store a token as an env var', () => {
+    it('Should create a session and store a token as an env var', () => {
         cy.api({
             method: 'POST',
             url: '/challenger',
@@ -1151,7 +1151,7 @@ Issue a POST request on the `/heartbeat` end point
 
     /*Issue a POST request on the `/heartbeat` end point and receive 501 (Not Implemented)
  when you override the Method Verb to a TRACE*/
-    it.only('POST /heartbeat as Trace (501)', () => {
+    it('POST /heartbeat as Trace (501)', () => {
         cy.api({
             method: 'POST',
             url: '/heartbeat',
@@ -1475,7 +1475,7 @@ describe('Miscellaneous Challenges', () => {
 
     /*Issue as many POST requests as it takes to add the maximum number of TODOS allowed for a user.
        The maximum number should be listed in the documentation.*/
-    it.only('POST /todos (201) all', () => {
+    it('POST /todos (201) all', () => {
         cy.deleteAllTodos();
         // Generate test data
         const randomTask = {
