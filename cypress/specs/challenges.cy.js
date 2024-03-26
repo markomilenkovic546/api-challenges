@@ -1234,12 +1234,44 @@ describe('Authorization Challenges', () => {
             method: 'GET',
             url: '/secret/note',
             headers: {
-                'X-Challenger': Cypress.env('X-Challenger'),
+                'X-Challenger': Cypress.env('X-Challenger')
             },
             failOnStatusCode: false
         }).then((response) => {
             expect(response.status).to.eqls(401);
         });
         cy.verifyChallenge(50);
+    });
+
+    /*Issue a GET request on the `/secret/note` end point receive 200 when
+     valid X-AUTH-TOKEN used - response body should contain the note*/
+    it.only('GET /secret/note (200)', () => {
+        cy.api({
+            method: 'POST',
+            url: '/secret/token',
+            auth: {
+                username: 'admin',
+                password: 'password'
+            },
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            const xAuthToken = response.headers['x-auth-token'];
+
+            cy.api({
+                method: 'GET',
+                url: '/secret/note',
+                headers: {
+                    'X-Challenger': Cypress.env('X-Challenger'),
+                    'X-AUTH-TOKEN': xAuthToken
+                },
+                failOnStatusCode: false
+            }).then((response) => {
+                expect(response.status).to.eqls(200);
+            });
+        });
+        cy.verifyChallenge(51);
     });
 });
