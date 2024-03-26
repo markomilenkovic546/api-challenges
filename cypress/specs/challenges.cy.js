@@ -954,7 +954,7 @@ describe('Restore session', () => {
     /*Issue a GET request on the `/challenger/database/{guid}` end point, 
        to retrieve the current todos database for the user.
         You can use this to restore state later. */
-    it.only('GET /challenger/database/guid (200)', () => {
+    it('GET /challenger/database/guid (200)', () => {
         cy.api({
             method: 'GET',
             url: `/challenger/database/${Cypress.env('X-Challenger')}`,
@@ -970,7 +970,7 @@ describe('Restore session', () => {
 
     /*Issue a PUT request on the `/challenger/database/{guid}` endpoint,
      with a payload to restore the Todos database in memory.*/
-    it.only('PUT /challenger/database/guid (Update)', () => {
+    it('PUT /challenger/database/guid (Update)', () => {
         cy.api({
             method: 'GET',
             url: `/challenger/database/${Cypress.env('X-Challenger')}`,
@@ -999,7 +999,7 @@ describe('Restore session', () => {
 describe('Mix Accept and Content-Type Challenges', () => {
     /*Issue a POST request on the `/todos` end point to create a todo using
      Content-Type `application/xml` but Accept `application/json`*/
-    it.only('POST /todos XML to JSON', () => {
+    it('POST /todos XML to JSON', () => {
         const randomTask = {
             title: faker.lorem.words(),
             doneStatus: true,
@@ -1028,7 +1028,7 @@ describe('Mix Accept and Content-Type Challenges', () => {
     /*	
 Issue a POST request on the `/todos` end point to create
  a todo using Content-Type `application/xml`but Accept `application/json`*/
-    it.only('POST /todos JSON to XML', () => {
+    it('POST /todos JSON to XML', () => {
         const randomTask = {
             title: faker.lorem.words(),
             doneStatus: true,
@@ -1048,5 +1048,23 @@ Issue a POST request on the `/todos` end point to create
             expect(response.status).to.eqls(201);
             expect(response.headers['content-type']).to.eqls('application/xml');
         });
+        cy.verifyChallenge(39);
+    });
+});
+
+describe('Status Code Challenges', () => {
+    /*Issue a DELETE request on the `/heartbeat` end point and receive 405 (Method Not Allowed)*/
+    it.only('DELETE /heartbeat (405)', () => {
+        cy.api({
+            method: 'DELETE',
+            url: '/heartbeat',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(405);
+        });
+        cy.verifyChallenge(41);
     });
 });
