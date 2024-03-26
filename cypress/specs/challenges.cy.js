@@ -1166,3 +1166,22 @@ Issue a POST request on the `/heartbeat` end point
         cy.verifyChallenge(46);
     });
 });
+
+describe('Authentication Challenges', () => {
+    /*Issue a POST request on the `/secret/token` end point and receive 401 when
+     Basic auth username/password is not admin/password*/
+    it.only('POST /secret/token (401)', () => {
+        cy.api({
+            method: 'POST',
+            url: '/secret/token',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger'),
+                'Authorization': 'Basic fdawe123aW46cGFzc3dvcmRk'
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(401);
+        })
+        cy.verifyChallenge(47);
+    });
+});
