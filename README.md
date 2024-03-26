@@ -1,10 +1,10 @@
 # API Testing Challenge - Cypress Tests
 
-This repository contains Cypress tests written to complete a series of API testing challenges provided by [https://apichallenges.eviltester.com/](https://apichallenges.eviltester.com/).
+This repository contains Cypress tests written to complete a series of API testing challenges provided by [https://apichallenges.eviltester.com/](https://apichallenges.eviltester.com/)
 
 ## Introduction
 
-[https://apichallenges.eviltester.com/](https://apichallenges.eviltester.com/)] offers a collection of API testing challenges aimed at practicing API testing skills. This repository contains Cypress test scripts developedto complete these challenges.
+[https://apichallenges.eviltester.com/](https://apichallenges.eviltester.com/) offers a collection of API testing challenges aimed at practicing API testing skills. This repository contains Cypress test scripts developedto complete these challenges.
 
 ## Getting Started
 
