@@ -817,7 +817,7 @@ describe('Content-Type Challenges', () => {
             },
             body: `<todo>
             <doneStatus>${randomTask.doneStatus}</doneStatus>
-            <title>${randomTask.description}</title>
+            <title>${randomTask.title}</title>
           </todo>`,
             failOnStatusCode: false
         }).then((response) => {
@@ -968,18 +968,18 @@ describe('Restore session', () => {
         cy.verifyChallenge(36);
     });
 
-    /*Issue a PUT request on the `/challenger/database/{guid}` end point,
+    /*Issue a PUT request on the `/challenger/database/{guid}` endpoint,
      with a payload to restore the Todos database in memory.*/
-        it.only('PUT /challenger/database/guid (Update)', () => {
-            cy.api({
-                method: 'GET',
-                url: `/challenger/database/${Cypress.env('X-Challenger')}`,
-                headers: {
-                    'X-Challenger': Cypress.env('X-Challenger')
-                },
-                failOnStatusCode: false
-            }).then((response) => {
-                const payload = response.body
+    it.only('PUT /challenger/database/guid (Update)', () => {
+        cy.api({
+            method: 'GET',
+            url: `/challenger/database/${Cypress.env('X-Challenger')}`,
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            const payload = response.body;
             cy.api({
                 method: 'PUT',
                 url: `/challenger/database/${Cypress.env('X-Challenger')}`,
@@ -991,7 +991,37 @@ describe('Restore session', () => {
             }).then((response) => {
                 expect(response.status).to.eqls(204);
             });
-        })
-            cy.verifyChallenge(37);
         });
+        cy.verifyChallenge(37);
+    });
+});
+
+describe('Mix Accept and Content-Type Challenges', () => {
+    /*Issue a POST request on the `/todos` end point to create a todo using
+     Content-Type `application/xml` but Accept `application/json`*/
+    it.only('POST /todos XML to JSON', () => {
+        const randomTask = {
+            title: faker.lorem.words(),
+            doneStatus: true,
+            description: faker.lorem.sentence()
+        };
+        cy.api({
+            method: 'POST',
+            url: `/todos`,
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger'),
+                'Content-Type': 'application/xml',
+                Accept: 'application/json'
+            },
+            body: `<todo>
+            <doneStatus>${randomTask.doneStatus}</doneStatus>
+            <title>${randomTask.title}</title>
+          </todo>`,
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(201);
+            expect(response.headers['content-type']).to.eqls('application/json');
+        });
+        cy.verifyChallenge(38);
+    });
 });
