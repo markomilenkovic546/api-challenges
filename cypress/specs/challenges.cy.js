@@ -1226,4 +1226,20 @@ describe('Authorization Challenges', () => {
         });
         cy.verifyChallenge(49);
     });
+
+    /*Issue a GET request on the `/secret/note` endpoint
+     and receive 401 when no X-AUTH-TOKEN header present*/
+    it.only('GET /secret/note (401)', () => {
+        cy.api({
+            method: 'GET',
+            url: '/secret/note',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger'),
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(401);
+        });
+        cy.verifyChallenge(50);
+    });
 });
