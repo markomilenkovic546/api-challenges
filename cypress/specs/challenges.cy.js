@@ -1208,3 +1208,22 @@ describe('Authentication Challenges', () => {
         cy.verifyChallenge(48);
     });
 });
+
+describe('Authorization Challenges', () => {
+    /* Issue a GET request on the `/secret/note`
+     end point and receive 403 when X-AUTH-TOKEN does not match a valid token*/
+    it.only('GET /secret/note (403)', () => {
+        cy.api({
+            method: 'GET',
+            url: '/secret/note',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger'),
+                'X-AUTH-TOKEN': 'h5d4f8e4g5f4h8e1sh1i'
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(403);
+        });
+        cy.verifyChallenge(49);
+    });
+});
