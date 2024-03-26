@@ -2,7 +2,7 @@ const { faker } = require('@faker-js/faker');
 const tv4 = require('tv4');
 
 describe('Challenger session creation', () => {
-    it('Should create a session and store a token as an env var', () => {
+    it.only('Should create a session and store a token as an env var', () => {
         cy.api({
             method: 'POST',
             url: '/challenger',
@@ -1113,3 +1113,22 @@ describe('Status Code Challenges', () => {
         cy.verifyChallenge(43);
     });
 });
+
+describe('HTTP Method Override Challenges', () => {
+  
+    /*Issue a POST request on the `/heartbeat` end point and receive 405 when you override the Method Verb to a DELETE*/
+    it.only('POST /heartbeat as DELETE (405)', () => {
+        cy.api({
+            method: 'POST',
+            url: '/heartbeat',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger'),
+                'X-HTTP-Method-Override': 'POST'
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(405);
+        });
+        cy.verifyChallenge(44);
+  });
+})
