@@ -967,4 +967,31 @@ describe('Restore session', () => {
         });
         cy.verifyChallenge(36);
     });
+
+    /*Issue a PUT request on the `/challenger/database/{guid}` end point,
+     with a payload to restore the Todos database in memory.*/
+        it.only('PUT /challenger/database/guid (Update)', () => {
+            cy.api({
+                method: 'GET',
+                url: `/challenger/database/${Cypress.env('X-Challenger')}`,
+                headers: {
+                    'X-Challenger': Cypress.env('X-Challenger')
+                },
+                failOnStatusCode: false
+            }).then((response) => {
+                const payload = response.body
+            cy.api({
+                method: 'PUT',
+                url: `/challenger/database/${Cypress.env('X-Challenger')}`,
+                headers: {
+                    'X-Challenger': Cypress.env('X-Challenger')
+                },
+                body: payload,
+                failOnStatusCode: false
+            }).then((response) => {
+                expect(response.status).to.eqls(204);
+            });
+        })
+            cy.verifyChallenge(37);
+        });
 });
