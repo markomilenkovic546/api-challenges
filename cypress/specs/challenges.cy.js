@@ -1024,4 +1024,29 @@ describe('Mix Accept and Content-Type Challenges', () => {
         });
         cy.verifyChallenge(38);
     });
+
+    /*	
+Issue a POST request on the `/todos` end point to create
+ a todo using Content-Type `application/xml`but Accept `application/json`*/
+    it.only('POST /todos JSON to XML', () => {
+        const randomTask = {
+            title: faker.lorem.words(),
+            doneStatus: true,
+            description: faker.lorem.sentence()
+        };
+        cy.api({
+            method: 'POST',
+            url: `/todos`,
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger'),
+                'Content-Type': 'application/json',
+                Accept: 'application/xml'
+            },
+            body: { title: randomTask.title, doneStatus: randomTask.doneStatus },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(201);
+            expect(response.headers['content-type']).to.eqls('application/xml');
+        });
+    });
 });
