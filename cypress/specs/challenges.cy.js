@@ -1308,7 +1308,7 @@ describe('Authorization Challenges', () => {
         });
         cy.verifyChallenge(52);
     });
-  /*Issue a POST request on the `/secret/note` end point with a note payload {"note":"my note"}
+    /*Issue a POST request on the `/secret/note` end point with a note payload {"note":"my note"}
    and receive 401 when no X-AUTH-TOKEN present*/
     it.only('POST /secret/note (401)', () => {
         cy.api({
@@ -1329,7 +1329,7 @@ describe('Authorization Challenges', () => {
                 method: 'POST',
                 url: '/secret/note',
                 headers: {
-                    'X-Challenger': Cypress.env('X-Challenger'),
+                    'X-Challenger': Cypress.env('X-Challenger')
                 },
                 body: { note: `${faker.lorem.word()}` },
                 failOnStatusCode: false
@@ -1338,5 +1338,40 @@ describe('Authorization Challenges', () => {
             });
         });
         cy.verifyChallenge(53);
+    });
+
+    /*	
+Issue a POST request on the `/secret/note` end point
+ with a note payload {"note":"my note"} and receive 403
+ when X-AUTH-TOKEN does not match a valid token*/
+    it.only('POST /secret/note (403)', () => {
+        cy.api({
+            method: 'POST',
+            url: '/secret/token',
+            auth: {
+                username: 'admin',
+                password: 'password'
+            },
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            const xAuthToken = response.headers['x-auth-token'];
+
+            cy.api({
+                method: 'POST',
+                url: '/secret/note',
+                headers: {
+                    'X-Challenger': Cypress.env('X-Challenger'),
+                    'X-AUTH-TOKEN': 'd21313ds'
+                },
+                body: { note: `${faker.lorem.word()}` },
+                failOnStatusCode: false
+            }).then((response) => {
+                expect(response.status).to.eqls(403);
+            });
+        });
+        cy.verifyChallenge(54);
     });
 });
