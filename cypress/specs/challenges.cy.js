@@ -1067,4 +1067,19 @@ describe('Status Code Challenges', () => {
         });
         cy.verifyChallenge(40);
     });
+
+    /*Issue a PATCH request on the `/heartbeat` end point and receive 500 (internal server error)*/
+    it.only('PATCH /heartbeat (500)', () => {
+        cy.api({
+            method: 'PATCH',
+            url: '/heartbeat',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(500);
+        });
+        cy.verifyChallenge(41);
+    });
 });
