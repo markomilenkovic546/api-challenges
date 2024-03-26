@@ -1174,14 +1174,37 @@ describe('Authentication Challenges', () => {
         cy.api({
             method: 'POST',
             url: '/secret/token',
+            auth: {
+                username: 'john',
+                password: 'sadwffas'
+            },
             headers: {
-                'X-Challenger': Cypress.env('X-Challenger'),
-                'Authorization': 'Basic fdawe123aW46cGFzc3dvcmRk'
+                'X-Challenger': Cypress.env('X-Challenger')
             },
             failOnStatusCode: false
         }).then((response) => {
             expect(response.status).to.eqls(401);
-        })
+        });
         cy.verifyChallenge(47);
+    });
+
+    /*Issue a POST request on the `/secret/token` end point
+         and receive 201 when Basic auth username/password is admin/password*/
+    it.only('POST /secret/token (201)', () => {
+        cy.api({
+            method: 'POST',
+            url: '/secret/token',
+            auth: {
+                username: 'admin',
+                password: 'password'
+            },
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(201);
+        });
+        cy.verifyChallenge(48);
     });
 });
