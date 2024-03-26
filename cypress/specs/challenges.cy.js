@@ -2,7 +2,7 @@ const { faker } = require('@faker-js/faker');
 const tv4 = require('tv4');
 
 describe('Challenger session creation', () => {
-    it.only('Should create a session and store a token as an env var', () => {
+    it('Should create a session and store a token as an env var', () => {
         cy.api({
             method: 'POST',
             url: '/challenger',
@@ -1054,7 +1054,7 @@ Issue a POST request on the `/todos` end point to create
 
 describe('Status Code Challenges', () => {
     /*Issue a DELETE request on the `/heartbeat` end point and receive 405 (Method Not Allowed)*/
-    it.only('DELETE /heartbeat (405)', () => {
+    it('DELETE /heartbeat (405)', () => {
         cy.api({
             method: 'DELETE',
             url: '/heartbeat',
@@ -1069,7 +1069,7 @@ describe('Status Code Challenges', () => {
     });
 
     /*Issue a PATCH request on the `/heartbeat` end point and receive 500 (internal server error)*/
-    it.only('PATCH /heartbeat (500)', () => {
+    it('PATCH /heartbeat (500)', () => {
         cy.api({
             method: 'PATCH',
             url: '/heartbeat',
@@ -1081,5 +1081,35 @@ describe('Status Code Challenges', () => {
             expect(response.status).to.eqls(500);
         });
         cy.verifyChallenge(41);
+    });
+
+    /*Issue a TRACE request on the `/heartbeat` end point and receive 501 (Not Implemented)*/
+    it('TRACE /heartbeat (501)', () => {
+        cy.api({
+            method: 'TRACE',
+            url: '/heartbeat',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(501);
+        });
+        cy.verifyChallenge(42);
+    });
+
+    /*Issue a GET request on the `/heartbeat` end point and receive 204 when server is running*/
+    it('GET /heartbeat (204)', () => {
+        cy.api({
+            method: 'GET',
+            url: '/heartbeat',
+            headers: {
+                'X-Challenger': Cypress.env('X-Challenger')
+            },
+            failOnStatusCode: false
+        }).then((response) => {
+            expect(response.status).to.eqls(204);
+        });
+        cy.verifyChallenge(42);
     });
 });
